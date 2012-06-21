@@ -1,0 +1,4 @@
+sensu.test 100 0
+sensu.test 10000 0
+sensu.test 1000 0
+

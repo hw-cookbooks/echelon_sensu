@@ -1,0 +1,57 @@
+#!/usr/bin/env ruby
+
+require 'rubygems' if RUBY_VERSION < '1.9.0'
+require 'sensu-plugin/check/cli'
+
+class RedisInfo < Sensu::Plugin::Check::CLI
+
+  check_name 'redis_info'
+
+  option :warn_over,
+    :short => '-w N',
+    :long => '--warn-over N',
+    :proc => proc {|a| a.to_f }
+
+  option :crit_over,
+    :short => '-c N',
+    :long => '--crit-over N',
+    :proc => proc {|a| a.to_f }
+
+  option :warn_under,
+    :short => '-W N',
+    :long => '--warn-under N',
+    :proc => proc {|a| a.to_f },
+    :default => 0
+
+  option :crit_under,
+    :short => '-C N',
+    :long => '--crit-under N',
+    :proc => proc {|a| a.to_f },
+    :default => 0
+
+  option :info_pat,
+    :short => '-p PATTERN',
+    :long => '--pattern PATTERN'
+
+  def run
+
+    value = 0
+    msg = "[Redis] Pattern not found!"
+
+    IO.popen("/usr/bin/redis-cli info 2>&1").read.split("\r\n").each do |substr|
+      if substr.include?("#{config[:info_pat]}:")
+        value = substr.slice!(/[0-9]+.[0-9]+/).to_f
+        msg = "[Redis] Value for #{config[:info_pat]}: #{value}"
+      end
+    end
+
+    if value < config[:crit_under] || value > config[:crit_over]
+      critical msg
+    elsif value < config[:warn_under] || value > config[:warn_over]
+      warning msg
+    else
+      ok msg
+    end
+  end
+
+end

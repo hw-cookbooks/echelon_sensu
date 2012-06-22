@@ -38,3 +38,10 @@ begin
 rescue
   Chef::Log.warn "No campfire config found"
 end
+
+template "/etc/sensu/handlers/default" do
+  source "default.erb"
+  owner "root"
+  group "root"
+  mode 0755
+end

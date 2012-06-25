@@ -58,11 +58,9 @@ template "/etc/sensu/handlers/default" do
   owner "root"
   group "root"
   mode 0755
-  variables (
-             :api_ip_addr => node[:echelon_sensu][:api_ip_addr],
+  variables( :api_ip_addr => node[:echelon_sensu][:api_ip_addr],
              :server_url => node[:echelon_sensu][:server_url],
              :validation_client_name => node[:echelon_sensu][:validation_client_name],
              :conf_dir => node[:echelon_sensu][:conf_dir],
-             :enabled => node[:echelon_sensu][:enabled]
-             )
+             :enabled => node[:echelon_sensu][:enabled] )
 end

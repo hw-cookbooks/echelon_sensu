@@ -39,9 +39,29 @@ rescue
   Chef::Log.warn "No campfire config found"
 end
 
+begin
+  [:server_url, :validation_client_name, :conf_dir].each do |attr|
+    if node[:echelon_sensu][attr].nil?
+      node[:echelon_sensu][attr] = node[:chef_client][attr]
+    end
+  end
+  if node[:echelon_sensu][:api_ip_addr].nil?
+    node[:echelon_sensu][:api_ip_addr] = node[:sensu][:redis][:host]
+  end
+rescue
+  Chef::Log.warn "Cookbook chef_client unavailable, echelon_sensu cannot dynamically check nodes"
+  node[:echelon_sensu][:enabled] = false
+end
+
 template "/etc/sensu/handlers/default" do
   source "default.erb"
   owner "root"
   group "root"
   mode 0755
+  variables (
+            :api_ip_addr => node[:echelon_sensu][:api_ip_addr],
+            :server_url => node[:echelon_sensu][:server_url],
+            :validation_client_name => node[:echelon_sensu][:validation_client_name],
+            :conf_dir => node[:echelon_sensu][:conf_dir]
+  )
 end

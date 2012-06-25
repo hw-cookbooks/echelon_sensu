@@ -12,19 +12,22 @@ class DefaultHandler < Sensu::Handler
     @event['client']['name'] + '/' + @event['check']['name']
   end
 
-  def default
-    chef_server_url = "<%= node.chef_client.server_url -%>"
-    client_name = "<%= node.chef_client.validation_client_name -%>"
-    signing_key_filename = "<%= node.chef_client.conf_dir -%>/validation.pem"
-    Chef::REST.new(chef_server_url, client_name, signing_key_filename)
+  def client_list(client)
+    if node[:echelon_sensu][:enabled]
+      chef_server_url = "<%= @server_url %>"
+      client_name = "<%= @validation_client_name %>"
+      signing_key_filename = "<%= @conf_dir %>/validation.pem"
+      return Chef::REST.new(chef_server_url, client_name, signing_key_filename).get_rest("/clients").keys.include?(client)
+    end
   end
 
   def handle
     begin
       timeout(@event['check']['timeout'] || 10) do
-        if !default.get_rest("/clients").keys.include?(@event['client']['name'])
-          puts "Client " + @event['client']['name'] + " was not found! Removing related checks from Sensu"
-          uri = URI("http://<%= node.echelon_sensu.api_ip_addr %>/client/" + @event['client']['name'])
+        client = @event['client']['name']
+        if !client_list(client) && node[:echelon_sensu][:enabled]
+          puts "Client " + client + " was not found! Removing related checks from Sensu"
+          uri = URI("http://<%= @api_ip_addr %>/client/" + client)
           uri.port = 4567
           req = Net::HTTP::Delete.new(uri.path)
           req.basic_auth 'admin', 'secret'
@@ -34,8 +37,8 @@ class DefaultHandler < Sensu::Handler
         end
       end
     rescue Timeout::Error
-      puts 'Timed out while searching for ' + @event['client']['name'] + ' on the server'
-      puts 'Incident: ' + incident_key
+      puts "Timed out while searching for " + client + " on the server"
+      puts "Incident: " + incident_key
     end
   end
 

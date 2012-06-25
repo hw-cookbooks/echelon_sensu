@@ -1,4 +1,4 @@
-include_recipe 'echelon-sensu::default'
+include_recipe 'echelon_sensu::default'
 
 include_recipe "sensu::client"
 

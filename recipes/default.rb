@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: echelon-sensu
+# Cookbook Name:: echelon_sensu
 # Recipe:: default
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,4 +24,4 @@ unless sensu_server.name == node.name
   Chef::Log.debug "sensu::client: sensu_server.rabbitmq.host #{node.sensu.rabbitmq.host}"
 end
 
-include_recipe 'echelon-sensu::client'
+include_recipe 'echelon_sensu::client'

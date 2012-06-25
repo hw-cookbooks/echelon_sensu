@@ -45,17 +45,14 @@ class RedisInfo < Sensu::Plugin::Check::CLI
       end
     end
 
-    begin
-      if value < config[:crit_under] || value > config[:crit_over]
-        critical msg
-      elsif value < config[:warn_under] || value > config[:warn_over]
-        warning msg
-      else
-        ok msg
-      end
-    rescue
-      warning "[Redis] warn_over or crit_over value does not exist for #{config[:info_pat]}"
+    if value < config[:crit_under] || (value > config[:crit_over] && config[:crit_over])
+      critical msg
+    elsif value < config[:warn_under] || (value > config[:warn_over] && config[:warn_over])
+      warning msg
+    else
+      ok msg
     end
+
   end
 
 end

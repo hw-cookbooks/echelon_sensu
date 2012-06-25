@@ -13,10 +13,10 @@ begin
   pagerduty = data_bag_item "pagerduty", node.chef_environment
   file File.join(node.sensu.directory, "conf.d", "pagerduty.json") do
     content({
-      "pagerduty" => {
-        "api_key" => pagerduty["api_key"]
-      }
-    }.to_json)
+              "pagerduty" => {
+                "api_key" => pagerduty["api_key"]
+              }
+            }.to_json)
     owner node.sensu.user
   end
 rescue
@@ -27,12 +27,12 @@ begin
   campfire = data_bag_item "campfire", node.chef_environment
   file File.join(node.sensu.directory, "conf.d", "campfire.json") do
     content({
-      "campfire" => {
-        "account" => campfire["account"],
-        "room" => campfire["room"],
-        "token" => campfire["token"]
-      }
-    }.to_json)
+              "campfire" => {
+                "account" => campfire["account"],
+                "room" => campfire["room"],
+                "token" => campfire["token"]
+              }
+            }.to_json)
     owner node.sensu.user
   end
 rescue
@@ -59,9 +59,10 @@ template "/etc/sensu/handlers/default" do
   group "root"
   mode 0755
   variables (
-            :api_ip_addr => node[:echelon_sensu][:api_ip_addr],
-            :server_url => node[:echelon_sensu][:server_url],
-            :validation_client_name => node[:echelon_sensu][:validation_client_name],
-            :conf_dir => node[:echelon_sensu][:conf_dir]
-  )
+             :api_ip_addr => node[:echelon_sensu][:api_ip_addr],
+             :server_url => node[:echelon_sensu][:server_url],
+             :validation_client_name => node[:echelon_sensu][:validation_client_name],
+             :conf_dir => node[:echelon_sensu][:conf_dir],
+             :enabled => node[:echelon_sensu][:enabled]
+             )
 end

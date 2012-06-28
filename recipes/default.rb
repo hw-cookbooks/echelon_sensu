@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: echelon_sensu
+# Cookbook Name:: echelon-sensu
 # Recipe:: default
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

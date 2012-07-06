@@ -4,6 +4,8 @@ package 'build-essential'
   include_recipe "sensu::#{recipe}"
 end
 
+sensu_gem 'echelon_chef'
+
 # Custom handlers
 remote_directory File.join(node.sensu.directory, "handlers") do
   files_mode 0755
@@ -57,11 +59,13 @@ file "/etc/sensu/conf.d/chef.json" do
   mode 0644
   content(
     JSON.pretty_generate(
-             :api_ip_addr => node[:echelon_sensu][:api_ip_addr],
-             :server_url => node[:echelon_sensu][:server_url],
-             :validation_client_name => node[:echelon_sensu][:validation_client_name],
-             :conf_dir => node[:echelon_sensu][:conf_dir],
-             :enabled => node[:echelon_sensu][:enabled]
+      :chef => {
+        :api_ip_addr => node[:echelon_sensu][:api_ip_addr],
+        :server_url => node[:echelon_sensu][:server_url],
+        :validation_client_name => node[:echelon_sensu][:validation_client_name],
+        :conf_dir => node[:echelon_sensu][:conf_dir],
+        :enabled => node[:echelon_sensu][:enabled]
+      }
     )
   )
 end

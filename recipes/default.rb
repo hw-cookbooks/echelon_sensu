@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
+=begin
 sensu_server = Discovery.search("sensu_server", :node => node)
 
 unless sensu_server.name == node.name
@@ -23,5 +23,5 @@ unless sensu_server.name == node.name
 
   Chef::Log.debug "sensu::client: sensu_server.rabbitmq.host #{node.sensu.rabbitmq.host}"
 end
-
+=end
 include_recipe 'echelon_sensu::client'

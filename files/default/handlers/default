@@ -1,8 +1,35 @@
 #!/usr/bin/env ruby
 
 require 'rubygems' if RUBY_VERSION < '1.9.0'
-require 'json'
+require 'sensu-handler'
+require 'echelon_chef'
 
-event = JSON.parse(STDIN.read)
+class DefaultHandler < Sensu::Handler
 
-puts event.to_json
+  def incident_key
+    @event['client']['name'] + '/' + @event['check']['name']
+  end
+
+  def handle
+    begin
+      timeout(@event['check']['timeout'] || 10) do
+        client = @event['client']['name']
+        echef = EchelonChef.new(settings['chef'])
+        if !echef.client_exists?(client)
+          puts "Client " + client + " was not found! Removing related checks from Sensu"
+          uri = URI("http://#{settings['chef']['api_ip_addr']}/client/" + client)
+          uri.port = 4567
+          req = Net::HTTP::Delete.new(uri.path)
+          req.basic_auth 'admin', 'secret'
+          res = Net::HTTP.start(uri.host, uri.port) do |http|
+            http.request(req)
+          end
+        end
+      end
+    rescue Timeout::Error
+      puts "Timed out while searching for " + client + " on the server"
+      puts "Incident: " + incident_key
+    end
+  end
+
+end

@@ -10,6 +10,7 @@
 
 require 'rubygems' if RUBY_VERSION < '1.9.0'
 require 'sensu-handler'
+require 'echelon_chef'
 require 'redphone/pagerduty'
 
 class Pagerduty < Sensu::Handler
@@ -19,6 +20,8 @@ class Pagerduty < Sensu::Handler
   end
 
   def handle
+    echef = EchelonChef.new(settings['chef'])
+    bail "Node not in valid environment" unless echef.correct_environment?
     description = @event['check']['notification'] || [@event['client']['name'], @event['check']['name'], @event['check']['output']].join(' : ')
     begin
       timeout(3) do

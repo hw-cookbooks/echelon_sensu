@@ -20,6 +20,7 @@
 require "rubygems" if RUBY_VERSION < '1.9.0'
 require "sensu-handler"
 require "tinder"
+require "echelon_chef"
 
 class Campfire < Sensu::Handler
 
@@ -51,6 +52,8 @@ class Campfire < Sensu::Handler
   
   def handle
     filter_repeated 
+    echef = EchelonChef.new(settings['chef'])
+    bail "Node not in valid environment" unless echef.correct_environment?
     description = @event['check']['notification'] || [ @event['client']['name'],
                                               @event['check']['name'],
                                               @event['check']['output'],

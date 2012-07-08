@@ -15,7 +15,7 @@ class DefaultHandler < Sensu::Handler
       timeout(@event['check']['timeout'] || 10) do
         client = @event['client']['name']
         echef = EchelonChef.new(settings['chef'])
-        if !echef.client_exists?(client)
+        if(!echef.client_exists?(client))
           puts "Client " + client + " was not found! Removing related checks from Sensu"
           uri = URI("http://#{settings['chef']['api_ip_addr']}/client/" + client)
           uri.port = 4567
@@ -27,8 +27,7 @@ class DefaultHandler < Sensu::Handler
         end
       end
     rescue Timeout::Error
-      puts "Timed out while searching for " + client + " on the server"
-      puts "Incident: " + incident_key
+      bail "Timed out while searching for " + client + " on the server (#{incident_key})"
     end
   end
 

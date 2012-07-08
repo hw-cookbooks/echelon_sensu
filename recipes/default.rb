@@ -24,4 +24,11 @@ unless sensu_server.name == node.name
   Chef::Log.debug "sensu::client: sensu_server.rabbitmq.host #{node.sensu.rabbitmq.host}"
 end
 
+sensu_gem 'sensu-plugin'
+sensu_gem 'tinder'
+sensu_gem 'redphone'
+sensu_gem 'chef'
+sensu_gem 'echelon_chef'
+
 include_recipe 'echelon_sensu::client'
+include_recipe 'echelon_sensu::init_fixes'

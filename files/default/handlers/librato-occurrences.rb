@@ -12,6 +12,7 @@ require 'librato/metrics'
 class Librato < Sensu::Handler
 
   def handle
+    bail "Librato not currently configured" unless settings['librato']
     hostname = @event['client']['name'].split('.').first
     check_name = @event['check']['name'].gsub(%r|[ \.]|, '_')
     metric = "sensu.events.#{hostname}.#{check_name}.occurrences"

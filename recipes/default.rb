@@ -24,6 +24,10 @@ unless sensu_server.name == node.name
   Chef::Log.debug "sensu::client: sensu_server.rabbitmq.host #{node.sensu.rabbitmq.host}"
 end
 
+if node[:echelon_sensu][:remove_sensu_system_gem]
+  include_recipe 'echelon_sensu::remove_sensu_system_gem'
+end
+
 sensu_gem 'sensu-plugin'
 sensu_gem 'tinder'
 sensu_gem 'redphone'

@@ -72,7 +72,7 @@ if [ -n "$int_warn" -a -n "$int_crit" ]; then
       echo "MEM WARNING - $OUTPUTP"
       exit "$err"
     else
-      echo "MEM WARNING - $OUTOUT"
+      echo "MEM WARNING - $OUTPUT"
       exit "$err"
     fi
 

@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: echelon-sensu
+# Cookbook:: echelon-sensu
 # Recipe:: default
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,16 +15,16 @@
 # limitations under the License.
 #
 
-sensu_server = Discovery.search("sensu_server", :node => node)
+sensu_server = Discovery.search('sensu_server', node: node)
 
 unless sensu_server.name == node.name
   node.sensu.rabbitmq = sensu_server.sensu.rabbitmq.to_hash
-  node.sensu.rabbitmq.host = Discovery.ipaddress(:remote_node => sensu_server, :node => node)
+  node.sensu.rabbitmq.host = Discovery.ipaddress(remote_node: sensu_server, node: node)
 
   Chef::Log.debug "sensu::client: sensu_server.rabbitmq.host #{node.sensu.rabbitmq.host}"
 end
 
-if node[:echelon_sensu][:remove_sensu_system_gem]
+if node['echelon_sensu']['remove_sensu_system_gem']
   include_recipe 'echelon_sensu::remove_sensu_system_gem'
 end
 

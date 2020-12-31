@@ -74,4 +74,3 @@ file '/etc/sensu/conf.d/chef.json' do
     )
   )
 end
-

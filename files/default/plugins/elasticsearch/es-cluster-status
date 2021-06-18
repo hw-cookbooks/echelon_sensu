@@ -3,7 +3,7 @@
 # ElasticSearch Cluster Health
 # ===
 #
-# Copyright 2011 Sonian, Inc.
+# Copyright:: 2011 Sonian, Inc.
 #
 # Released under the same terms as Sensu (the MIT license); see LICENSE
 # for details.
@@ -14,10 +14,9 @@ require 'rest-client'
 require 'json'
 
 class ESClusterHealth < Sensu::Plugin::Check::CLI
-
   def get_es_resource(resource)
     begin
-      r = RestClient::Resource.new("http://localhost:9200/#{resource}", :timeout => 45)
+      r = RestClient::Resource.new("http://localhost:9200/#{resource}", timeout: 45)
       JSON.parse(r.get)
     rescue Errno::ECONNREFUSED
       warning 'Connection refused'
@@ -41,15 +40,14 @@ class ESClusterHealth < Sensu::Plugin::Check::CLI
     if is_master
       case get_status
       when 'green'
-        ok "Cluster is green"
+        ok 'Cluster is green'
       when 'yellow'
-        warning "Cluster is yellow"
+        warning 'Cluster is yellow'
       when 'red'
-        critical "Cluster is red"
+        critical 'Cluster is red'
       end
     else
       ok 'Not the master'
     end
   end
-
 end

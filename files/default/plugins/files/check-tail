@@ -12,40 +12,39 @@ require 'sensu-plugin/check/cli'
 require 'fileutils'
 
 class TailFile < Sensu::Plugin::Check::CLI
-
   option :file,
-         :description => "Path to file",
-         :short => '-f FILE',
-         :long => '--file FILE'
+         description: 'Path to file',
+         short: '-f FILE',
+         long: '--file FILE'
 
   option :pattern,
-         :description => "Pattern to search for",
-         :short => '-P PAT',
-         :long => '--pattern PAT'
+         description: 'Pattern to search for',
+         short: '-P PAT',
+         long: '--pattern PAT'
 
   option :lines,
-         :description => "Number of lines to tail",
-         :short => '-l LINES',
-         :long => '--lines LINES'
+         description: 'Number of lines to tail',
+         short: '-l LINES',
+         long: '--lines LINES'
 
   option :warn_only,
-         :description => "Warn instead of critical on match",
-         :short => '-w',
-         :long => '--warn-only',
-         :boolean => true
+         description: 'Warn instead of critical on match',
+         short: '-w',
+         long: '--warn-only',
+         boolean: true
 
   def run
-    unknown "No log file specified" unless config[:file]
-    unknown "No pattern specified" unless config[:pattern]
-    if(File.exists?(config[:file]))
+    unknown 'No log file specified' unless config[:file]
+    unknown 'No pattern specified' unless config[:pattern]
+    if File.exist?(config[:file])
       content = tail_file
-      if(pattern_match?)
+      if pattern_match?
         send(
           config[:warn_only] ? :warning : :critical,
           "Pattern matched: #{config[:pattern]}"
         )
       else
-        ok "No matches found"
+        ok 'No matches found'
       end
     else
       critical 'File not found'
@@ -59,5 +58,4 @@ class TailFile < Sensu::Plugin::Check::CLI
   def pattern_match?
     !!tail_file.match(config[:pattern])
   end
-
 end

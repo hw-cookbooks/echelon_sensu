@@ -4,41 +4,39 @@ require 'rubygems' if RUBY_VERSION < '1.9.0'
 require 'sensu-plugin/check/cli'
 
 class RedisInfo < Sensu::Plugin::Check::CLI
-
   check_name 'redis_info'
 
   option :warn_over,
-  :short => '-w N',
-  :long => '--warn-over N',
-  :proc => proc {|a| a.to_f }
+  short: '-w N',
+  long: '--warn-over N',
+  proc: proc { |a| a.to_f }
 
   option :crit_over,
-  :short => '-c N',
-  :long => '--crit-over N',
-  :proc => proc {|a| a.to_f }
+  short: '-c N',
+  long: '--crit-over N',
+  proc: proc { |a| a.to_f }
 
   option :warn_under,
-  :short => '-W N',
-  :long => '--warn-under N',
-  :proc => proc {|a| a.to_f },
-  :default => 0
+  short: '-W N',
+  long: '--warn-under N',
+  proc: proc { |a| a.to_f },
+  default: 0
 
   option :crit_under,
-  :short => '-C N',
-  :long => '--crit-under N',
-  :proc => proc {|a| a.to_f },
-  :default => 0
+  short: '-C N',
+  long: '--crit-under N',
+  proc: proc { |a| a.to_f },
+  default: 0
 
   option :info_pat,
-  :short => '-p PATTERN',
-  :long => '--pattern PATTERN'
+  short: '-p PATTERN',
+  long: '--pattern PATTERN'
 
   def run
-
     value = 0
-    msg = "[Redis] Pattern not found!"
+    msg = '[Redis] Pattern not found!'
 
-    IO.popen("/usr/bin/redis-cli info 2>&1").read.split("\r\n").each do |substr|
+    IO.popen('/usr/bin/redis-cli info 2>&1').read.split("\r\n").each do |substr|
       if substr.include?("#{config[:info_pat]}:")
         value = substr.slice!(/[0-9]+.[0-9]+/).to_f
         msg = "[Redis] Value for #{config[:info_pat]}: #{value}"
@@ -52,7 +50,5 @@ class RedisInfo < Sensu::Plugin::Check::CLI
     else
       ok msg
     end
-
   end
-
 end

@@ -9,7 +9,7 @@ class SensuClient
 
   def socket
     begin
-      @socket ||= TCPSocket.new("localhost", 3030)
+      @socket ||= TCPSocket.new('localhost', 3030)
     rescue Errno::ECONNREFUSED => e
       backoff e
       retry
@@ -17,14 +17,14 @@ class SensuClient
   end
 
   def socket_reset
-    unless @socket.nil? or (@socket.respond_to? :closed? and @socket.closed?)
+    unless @socket.nil? || (@socket.respond_to?(:closed?) && @socket.closed?)
       @socket.close
       puts "#{self}#socket_reset: socket closed #{socket.inspect}"
       @socket = nil
     end
   end
 
-  def backoff exception
+  def backoff(exception)
     increase_interval
     puts "#{self}#backoff: backing off due to error #{exception.inspect}, sleeping for #{interval}"
     sleep interval
@@ -33,9 +33,9 @@ class SensuClient
 
   def metric
     @metric ||= {
-      "name" => "test",
-      "type" => "metric",
-      "handler" => "graphite"
+      'name' => 'test',
+      'type' => 'metric',
+      'handler' => 'graphite',
     }
   end
 
@@ -53,13 +53,13 @@ class SensuClient
   end
 
   def initialize
-    trap("INT") do
-      if @socket.respond_to? :closed and @socket.closed?
+    trap('INT') do
+      if @socket.respond_to?(:closed) && @socket.closed?
         puts "#{self}#trap: closing socket"
         @socket.close
       end
 
-      puts "exiting"
+      puts 'exiting'
       Process.exit 0
     end
     @interval ||= 10
@@ -68,7 +68,7 @@ class SensuClient
 
   def run
     begin
-      metric["output"] = read_from_argf
+      metric['output'] = read_from_argf
       puts "#{self}#run: sending: #{metric.to_hash.inspect}"
       if socket.write metric.to_json
         reduce_interval
@@ -81,7 +81,7 @@ class SensuClient
   end
 
   def read_from_argf
-    Timeout::timeout(1) do
+    Timeout.timeout(1) do
       ARGF.reject do |line|
         line.split.size != 3
       end.join("\n")

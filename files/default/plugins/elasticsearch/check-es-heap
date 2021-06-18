@@ -3,7 +3,7 @@
 # Check Elasticsearch Heap Usage
 # ===
 #
-# Copyright 2011 Sonian, Inc.
+# Copyright:: 2011 Sonian, Inc.
 #
 # Released under the same terms as Sensu (the MIT license); see LICENSE
 # for details.
@@ -14,24 +14,23 @@ require 'rest-client'
 require 'json'
 
 class ESHeapUsage < Sensu::Plugin::Check::CLI
-
   option :warn,
-    :short => '-w N',
-    :long => '--warn N',
-    :description => 'Heap used in bytes WARNING threshold',
-    :proc => proc {|a| a.to_i },
-    :default => 0
+    short: '-w N',
+    long: '--warn N',
+    description: 'Heap used in bytes WARNING threshold',
+    proc: proc { |a| a.to_i },
+    default: 0
 
   option :crit,
-    :short => '-c N',
-    :long => '--crit N',
-    :description => 'Heap used in bytes CRITICAL threshold',
-    :proc => proc {|a| a.to_i },
-    :default => 0
+    short: '-c N',
+    long: '--crit N',
+    description: 'Heap used in bytes CRITICAL threshold',
+    proc: proc { |a| a.to_i },
+    default: 0
 
   def get_es_resource(resource)
     begin
-      r = RestClient::Resource.new("http://localhost:9200/#{resource}", :timeout => 45)
+      r = RestClient::Resource.new("http://localhost:9200/#{resource}", timeout: 45)
       JSON.parse(r.get)
     rescue Errno::ECONNREFUSED
       warning 'Connection refused'
